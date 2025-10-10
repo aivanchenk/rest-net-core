@@ -43,7 +43,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Food/Food.csproj",
+                "${workspaceFolder}/Food.Rest/Food.Rest.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -55,7 +55,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Water/Water.csproj",
+                "${workspaceFolder}/Water.Rest/Water.Rest.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

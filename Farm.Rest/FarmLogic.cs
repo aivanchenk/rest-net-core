@@ -85,11 +85,12 @@ public class FarmLogic
 				return new SubmissionResult { IsAccepted = false, FailReason = "FarmSelling" };
 			}
 			mState.AccumulatedFood += amount;
+			mLog.Info($"Received food: {amount}.");
 			return new SubmissionResult { IsAccepted = true, FailReason = string.Empty };
 		}
 	}
 
-	 public SubmissionResult SubmitWater(double amount)
+	public SubmissionResult SubmitWater(double amount)
     {
         lock (mState.AccessLock)
         {

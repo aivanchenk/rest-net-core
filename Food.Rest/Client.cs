@@ -4,77 +4,103 @@ using System.Net.Http;
 
 using NLog;
 
+using Services;
+
 
 /// <summary>
 /// Client example.
 /// </summary>
 class Client
 {
-	        /// <summary>
-        /// Logger for this class.
-        /// </summary>
-        private readonly Logger mLog = LogManager.GetCurrentClassLogger();
 
-        /// <summary>
-        /// Configures logging subsystem.
-        /// </summary>
-        private static void ConfigureLogging()
-        {
-                var config = new NLog.Config.LoggingConfiguration();
 
-                var console = new NLog.Targets.ConsoleTarget("console")
-                {
-                        Layout = @"${date:format=HH\:mm\:ss}|${level}| ${message} ${exception}"
-                };
+	/// <summary>
+	/// Logger for this class.
+	/// </summary>
+	Logger mLog = LogManager.GetCurrentClassLogger();
 
-                config.AddTarget(console);
-                config.AddRuleForAllLevels(console);
+	/// <summary>
+	/// Configures logging subsystem.
+	/// </summary>
+	private void ConfigureLogging()
+	{
+		var config = new NLog.Config.LoggingConfiguration();
 
-                LogManager.Configuration = config;
-        }
+		var console =
+			new NLog.Targets.ConsoleTarget("console")
+			{
+				Layout = @"${date:format=HH\:mm\:ss}|${level}| ${message} ${exception}"
+			};
+		config.AddTarget(console);
+		config.AddRuleForAllLevels(console);
 
-        /// <summary>
-        /// Program body.
-        /// </summary>
-        private async Task RunAsync(CancellationToken cancellationToken)
-        {
-                ConfigureLogging();
+		LogManager.Configuration = config;
+	}
 
-                mLog.Info("Food client started. Press Ctrl+C to exit.");
+	/// <summary>
+	/// Program body.
+	/// </summary>
+	private void Run() {
+		//configure logging
+		ConfigureLogging();
 
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                        mLog.Info($"Current time: {DateTime.Now:O}");
+		//initialize random number generator
+		var rnd = new Random();
 
-                        try
-                        {
-                                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
-                        }
-                        catch (OperationCanceledException)
-                        {
-                                break;
-                        }
-                }
+		//run everythin in a loop to recover from connection errors
+		while( true )
+		{
+			try {
+				//connect to the server, get service client proxy
+				var Farm = new FarmClient("http://127.0.0.1:5100", new HttpClient());
 
-                mLog.Info("Food client is stopping.");
-        }
+				//log identity data
+				mLog.Info($"I am a food client.");
 
-        /// <summary>
-        /// Program entry point.
-        /// </summary>
-        /// <param name="args">Command line arguments.</param>
-        public static async Task Main(string[] args)
-        {
-                using var cts = new CancellationTokenSource();
+				//do the food stuff
+				while (true)
+                                {
+                                // prepare an amount to send
+                                var amount = Math.Round(rnd.NextDouble() * 10.0, 2);
 
-                Console.CancelKeyPress += (_, eventArgs) =>
-                {
-                        eventArgs.Cancel = true;
-                        cts.Cancel();
-                };
+                                mLog.Info($"Sending {amount} units of food to Farm...");
 
-                var self = new Client();
-                await self.RunAsync(cts.Token);
-        }
+                                try
+                                {
+                                        // the generated client has a synchronous wrapper SubmitFood(...)
+                                        var result = Farm.SubmitFood(amount);
 
+                                        // log the server response
+                                        mLog.Info($"SubmitFood -> IsAccepted={result.IsAccepted}, FailReason='{result.FailReason ?? string.Empty}'");
+                                }
+                                catch (Exception ex)
+                                {
+                                        // ApiException or other exceptions will be caught here
+                                        mLog.Warn(ex, "Failed to submit food");
+                                }
+
+                                // wait between attempts
+                                Thread.Sleep(2000);
+                                }			
+			}
+			catch( Exception e )
+			{
+				//log whatever exception to console
+				mLog.Warn(e, "Unhandled exception caught. Will restart main loop.");
+
+				//prevent console spamming
+				Thread.Sleep(2000);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Program entry point.
+	/// </summary>
+	/// <param name="args">Command line arguments.</param>
+	static void Main(string[] args)
+	{
+		var self = new Client();
+		self.Run();
+	}
 }

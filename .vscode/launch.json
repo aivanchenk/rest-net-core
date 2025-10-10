@@ -45,10 +45,10 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-Food",
-            "program": "${workspaceFolder}/Food/bin/Debug/net8.0/Food.dll",
+            "program": "${workspaceFolder}/Food.Rest/bin/Debug/net8.0/Food.Rest.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Food",
-            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/Food.Rest",
+            "console": "externalTerminal",
             "stopAtEntry": false
         },
         {
@@ -56,10 +56,10 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-Water",
-            "program": "${workspaceFolder}/Water/bin/Debug/net8.0/Water.dll",
+            "program": "${workspaceFolder}/Water.Rest/bin/Debug/net8.0/Water.Rest.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Water",
-            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/Water.Rest",
+            "console": "externalTerminal",
             "stopAtEntry": false
         }    
     ]
