@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\projects\\rest-net-core\\Farm.Rest\\Farm.Rest.csproj": {}
+    "C:\\projects\\rest-net-core\\Water.Rest\\Water.Rest.csproj": {}
   },
   "projects": {
-    "C:\\projects\\rest-net-core\\Farm.Rest\\Farm.Rest.csproj": {
+    "C:\\projects\\rest-net-core\\Water.Rest\\Water.Rest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\projects\\rest-net-core\\Farm.Rest\\Farm.Rest.csproj",
-        "projectName": "Farm.Rest",
-        "projectPath": "C:\\projects\\rest-net-core\\Farm.Rest\\Farm.Rest.csproj",
+        "projectUniqueName": "C:\\projects\\rest-net-core\\Water.Rest\\Water.Rest.csproj",
+        "projectName": "Water.Rest",
+        "projectPath": "C:\\projects\\rest-net-core\\Water.Rest\\Water.Rest.csproj",
         "packagesPath": "C:\\Users\\ilyaf\\.nuget\\packages\\",
-        "outputPath": "C:\\projects\\rest-net-core\\Farm.Rest\\obj\\",
+        "outputPath": "C:\\projects\\rest-net-core\\Water.Rest\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

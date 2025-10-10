@@ -1,0 +1,6 @@
+@Water.Rest_HostAddress = http://localhost:5147
+
+GET {{Water.Rest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
