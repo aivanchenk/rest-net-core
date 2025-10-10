@@ -45,6 +45,19 @@
           }
         }
       },
+      "NLog/6.0.5": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/NLog.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.1/NLog.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.6.2": {
         "type": "package",
         "dependencies": {
@@ -372,6 +385,28 @@
         "microsoft.openapi.nuspec"
       ]
     },
+    "NLog/6.0.5": {
+      "sha512": "Gq/L18qnZhIfrfqXtUBKdDMtT8cZB+974C99H+w6DxdlIcT4wYCCGjRgnUij3spUH1HWScF6JRaCyv11CHZJ6g==",
+      "type": "package",
+      "path": "nlog/6.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "N.png",
+        "lib/net35/NLog.dll",
+        "lib/net35/NLog.xml",
+        "lib/net45/NLog.dll",
+        "lib/net45/NLog.xml",
+        "lib/net46/NLog.dll",
+        "lib/net46/NLog.xml",
+        "lib/netstandard2.0/NLog.dll",
+        "lib/netstandard2.0/NLog.xml",
+        "lib/netstandard2.1/NLog.dll",
+        "lib/netstandard2.1/NLog.xml",
+        "nlog.6.0.5.nupkg.sha512",
+        "nlog.nuspec"
+      ]
+    },
     "Swashbuckle.AspNetCore/6.6.2": {
       "sha512": "+NB4UYVYN6AhDSjW0IJAd1AGD8V33gemFNLPaxKTtPkHB+HaKAKf9MGAEUPivEWvqeQfcKIw8lJaHq6LHljRuw==",
       "type": "package",
@@ -478,6 +513,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Microsoft.AspNetCore.OpenApi >= 8.0.15",
+      "NLog >= 6.0.5",
       "Swashbuckle.AspNetCore >= 6.6.2"
     ]
   },
@@ -534,6 +570,10 @@
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[8.0.15, )"
+          },
+          "NLog": {
+            "target": "Package",
+            "version": "[6.0.5, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
