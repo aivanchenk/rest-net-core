@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 
 using NLog;
 
-
 public class Server
 {
 	/// <summary>
@@ -52,7 +51,7 @@ public class Server
 		ConfigureLogging();
 
 		//indicate server is about to start
-		log.Info("Server is about to start");
+		log.Info("Farm server is about to start");
 
 		//start the server
 		StartServer(args);

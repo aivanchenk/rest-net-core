@@ -25,6 +25,42 @@
 			"cwd": "${workspaceFolder}/Car",
             "console": "externalTerminal",
 			"stopAtEntry": false
-		},    
+		},
+        {
+            "name": "Farm",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-Farm",
+            "program": "${workspaceFolder}/Farm.Rest/bin/Debug/net8.0/Farm.Rest.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Farm.Rest",
+            "console": "externalTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_URLS": "http://localhost:5100"
+            }
+        },
+        {
+            "name": "Food",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-Food",
+            "program": "${workspaceFolder}/Food/bin/Debug/net8.0/Food.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Food",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Water",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-Water",
+            "program": "${workspaceFolder}/Water/bin/Debug/net8.0/Water.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Water",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        }    
     ]
 }
