@@ -68,10 +68,10 @@ public class Server
 
 		//configure integrated server
 		builder.WebHost.ConfigureKestrel(opts => {
-			opts.Listen(IPAddress.Loopback, 5000);
+			opts.Listen(IPAddress.Loopback, 5100);
 		});
 
-		//add and configure swagger documentation generator (http://127.0.0.1:5000/swagger/)
+		//add and configure swagger documentation generator (http://127.0.0.1:5100/swagger/)
 		builder.Services.AddSwaggerGen(opts => {
 			//include code comments in swagger documentation
 			var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

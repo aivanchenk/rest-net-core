@@ -4,220 +4,77 @@ using System.Net.Http;
 
 using NLog;
 
-using Services;
-
 
 /// <summary>
 /// Client example.
 /// </summary>
 class Client
 {
-	/// <summary>
-	/// A set of names to choose from.
-	/// </summary>
-	private readonly List<string> NAMES = 
-		new List<string> { 
-			"John", "Peter", "Jack", "Steve"
-		};
+	        /// <summary>
+        /// Logger for this class.
+        /// </summary>
+        private readonly Logger mLog = LogManager.GetCurrentClassLogger();
 
-	/// <summary>
-	/// A set of surnames to choose from.
-	/// </summary>
-	private readonly List<string> SURNAMES = 
-		new List<String> { 
-			"Johnson", "Peterson", "Jackson", "Steveson" 
-		};
+        /// <summary>
+        /// Configures logging subsystem.
+        /// </summary>
+        private static void ConfigureLogging()
+        {
+                var config = new NLog.Config.LoggingConfiguration();
 
+                var console = new NLog.Targets.ConsoleTarget("console")
+                {
+                        Layout = @"${date:format=HH\:mm\:ss}|${level}| ${message} ${exception}"
+                };
 
-	/// <summary>
-	/// Logger for this class.
-	/// </summary>
-	Logger mLog = LogManager.GetCurrentClassLogger();
+                config.AddTarget(console);
+                config.AddRuleForAllLevels(console);
 
-	/// <summary>
-	/// Configures logging subsystem.
-	/// </summary>
-	private void ConfigureLogging()
-	{
-		var config = new NLog.Config.LoggingConfiguration();
+                LogManager.Configuration = config;
+        }
 
-		var console =
-			new NLog.Targets.ConsoleTarget("console")
-			{
-				Layout = @"${date:format=HH\:mm\:ss}|${level}| ${message} ${exception}"
-			};
-		config.AddTarget(console);
-		config.AddRuleForAllLevels(console);
+        /// <summary>
+        /// Program body.
+        /// </summary>
+        private async Task RunAsync(CancellationToken cancellationToken)
+        {
+                ConfigureLogging();
 
-		LogManager.Configuration = config;
-	}
+                mLog.Info("Food client started. Press Ctrl+C to exit.");
 
-	/// <summary>
-	/// Program body.
-	/// </summary>
-	private void Run() {
-		//configure logging
-		ConfigureLogging();
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                        mLog.Info($"Current time: {DateTime.Now:O}");
 
-		//initialize random number generator
-		var rnd = new Random();
+                        try
+                        {
+                                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                                break;
+                        }
+                }
 
-		//run everythin in a loop to recover from connection errors
-		while( true )
-		{
-			try {
-				//connect to the server, get service client proxy
-				var trafficLight = new TrafficLightClient("http://127.0.0.1:5000", new HttpClient());
+                mLog.Info("Food client is stopping.");
+        }
 
-				//initialize car descriptor
-				var car = new CarDesc();
+        /// <summary>
+        /// Program entry point.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        public static async Task Main(string[] args)
+        {
+                using var cts = new CancellationTokenSource();
 
-				car.CarNumber = 
-					Enumerable.Range(1, 3)
-						.Select(it => 'A' + rnd.Next('Z'-'A'))
-						.Aggregate("", (res, val) => res + (char)val) +
-					" " +
-					Enumerable.Range(1, 3)
-						.Select(it => '0' + rnd.Next('9' - '0'))
-						.Aggregate("", (res, val) => res + (char)val);
+                Console.CancelKeyPress += (_, eventArgs) =>
+                {
+                        eventArgs.Cancel = true;
+                        cts.Cancel();
+                };
 
-				car.DriverNameSurname =
-					NAMES[rnd.Next(NAMES.Count)] + 
-					" " +
-					SURNAMES[rnd.Next(SURNAMES.Count)];
+                var self = new Client();
+                await self.RunAsync(cts.Token);
+        }
 
-				//get unique client id
-				car.CarId = trafficLight.GetUniqueId();
-
-				//log identity data
-				mLog.Info($"I am car {car.CarId}, RegNr. {car.CarNumber}, Driver {car.DriverNameSurname}.");
-				Console.Title = $"I am car {car.CarId}, RegNr. {car.CarNumber}, Driver {car.DriverNameSurname}.";
-					
-				//do the car stuff
-				while( true )
-				{
-					//car state for this iteration
-					var isCrashed = false;
-					var isPassed = false;
-
-					//we are driving on the road
-					mLog.Info("I am driving on the road.");
-					Thread.Sleep(500 + rnd.Next(1500));
-
-					//and we see a traffic light
-					mLog.Info("I see a traffic light.");
-
-					//try passing the traffic light
-					while( !isCrashed && !isPassed )
-					{
-						//read the light state
-						var lightState = trafficLight.GetLightState();
-
-						//give some time for light to possibly switch, before taking action
-						Thread.Sleep(rnd.Next(500)); 
-
-						//green? try passing without waiting
-						if( lightState == LightState.Green )
-						{
-							//try passing 
-							mLog.Info("Light is green, trying to pass.");							
-							var par = trafficLight.Pass(car);
-
-							//handle result
-							if( par.IsSuccess )
-							{
-								mLog.Info("Passed, life is good.");		
-								isPassed = true;					
-							}
-							else
-							{
-								mLog.Info($"Crashed because '{par.CrashReason}'.");
-								isCrashed = true;
-							}
-						}
-						//red, queue until light is green and we can pass
-						else
-						{
-							//try entering a queue
-							mLog.Info("Light is red, trying to queue.");							
-							var inQueue = trafficLight.Queue(car);
-
-							//success? wait for light and queue
-							if( inQueue )
-							{
-								mLog.Info("I'm in queue now. Waiting for light.");
-
-								while( !isCrashed && !isPassed )
-								{
-									//determine state of light and queue
-									lightState = trafficLight.GetLightState();
-									var firstInLine = trafficLight.IsFirstInLine(car.CarId);
-
-									//give some time for light to possibly switch, before taking action
-									Thread.Sleep(rnd.Next(500)); 
-
-									//can pass? try it
-									if( lightState == LightState.Green && firstInLine )
-									{
-										//try passing
-										mLog.Info("Light is green and I an ready, trying to pass");
-										var par = trafficLight.Pass(car);
-
-										//handle the result
-										if( par.IsSuccess )
-										{
-											mLog.Info("Passed, life is good.");	
-											isPassed = true;							
-										}
-										else
-										{
-											mLog.Info($"Crashed because '{par.CrashReason}'.");
-											isCrashed = true;
-										}
-									}
-									//no passing yet, wait
-									else
-									{
-										mLog.Info("Waiting some more.");
-										Thread.Sleep(500 + rnd.Next(1500));
-									}
-								}
-							}
-							//could not queue (maybe light has changed)
-							else
-							{
-								mLog.Info("Queuing failed. Will check the light again.");
-							}
-						}
-					}
-
-					//managed to crash? reflect on it
-					if( isCrashed )
-					{
-						mLog.Info("Meditating on my mistakes...");
-						Thread.Sleep(500 + rnd.Next(1500));
-						mLog.Info("It is a new day and a new car.");
-					}
-				}				
-			}
-			catch( Exception e )
-			{
-				//log whatever exception to console
-				mLog.Warn(e, "Unhandled exception caught. Will restart main loop.");
-
-				//prevent console spamming
-				Thread.Sleep(2000);
-			}
-		}
-	}
-
-	/// <summary>
-	/// Program entry point.
-	/// </summary>
-	/// <param name="args">Command line arguments.</param>
-	static void Main(string[] args)
-	{
-		var self = new Client();
-		self.Run();
-	}
 }
