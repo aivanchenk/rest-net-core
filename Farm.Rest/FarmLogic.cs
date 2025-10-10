@@ -99,7 +99,9 @@ public class FarmLogic
                 return new SubmissionResult { IsAccepted = false, FailReason = "FarmSelling" };
             }
 
-            mState.AccumulatedWater += amount;
+			mState.AccumulatedWater += amount;
+			mLog.Info($"Received water: {amount}.");
+
             return new SubmissionResult { IsAccepted = true, FailReason = string.Empty };
         }
     }
