@@ -62,7 +62,7 @@ class Client
 				while (true)
 				{
 					// produce between -1.0 and 1.0 food
-					double producedFood = Math.Round(rnd.NextDouble() * 2.0 - 1.0, 1); 
+					double producedFood = Math.Round(rnd.NextDouble() * 6.0 - 1.0, 1);
 					pendingFood += producedFood;
 
 					var result = Farm.SubmitFood(pendingFood);
@@ -82,7 +82,7 @@ class Client
 					}
 
 					// wait between sending attempts
-					Thread.Sleep(2000);
+					Thread.Sleep(1000);
 				}
 			}
 			catch (Exception e)

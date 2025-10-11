@@ -60,7 +60,7 @@ class Client
 				while (true)
 				{
 					// produce between -1.0 and 1.0 water
-					double producedWater = Math.Round(rnd.NextDouble() * 2.0 - 1.0, 1);
+					double producedWater = Math.Round(rnd.NextDouble() * 6.0 - 1.0, 1);
 					pendingWater += producedWater;
 
 					var result = Farm.SubmitWater(pendingWater);
@@ -80,7 +80,7 @@ class Client
 					}
 
 					// wait between sending attempts
-					Thread.Sleep(2000);
+					Thread.Sleep(1000);
 				}
 			}
 			catch (Exception e)

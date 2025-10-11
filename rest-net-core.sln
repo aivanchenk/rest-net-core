@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficLight", "TrafficLight\TrafficLight.csproj", "{EE7B3F5B-0778-4B68-90AC-3AD9FF0BDA8C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car", "Car\Car.csproj", "{B7DCD727-2B16-4C06-A9E6-1A4D9C357CB5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farm.Rest", "Farm.Rest\Farm.Rest.csproj", "{BC3A2037-A459-4E70-B32E-38EF9F999EA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Food.Rest", "Food.Rest\Food.Rest.csproj", "{B5D8AD5F-92C8-4A03-BB88-173711366D55}"
