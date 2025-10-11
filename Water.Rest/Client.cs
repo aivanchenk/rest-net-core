@@ -17,6 +17,8 @@ class Client
 	/// </summary>
 	Logger mLog = LogManager.GetCurrentClassLogger();
 
+	private double pendingWater = 0.0;
+
 	/// <summary>
 	/// Configures logging subsystem.
 	/// </summary>
@@ -38,7 +40,8 @@ class Client
 	/// <summary>
 	/// Program body.
 	/// </summary>
-	private void Run() {
+	private void Run()
+	{
 		//configure logging
 		ConfigureLogging();
 
@@ -46,42 +49,41 @@ class Client
 		var rnd = new Random();
 
 		//run everythin in a loop to recover from connection errors
-		while( true )
+		while (true)
 		{
-			try {
+			try
+			{
 				//connect to the server, get service client proxy
 				var Farm = new FarmClient("http://127.0.0.1:5100", new HttpClient());
 
-				//log identity data
-				mLog.Info($"I am a water client.");
-
 				//do the water stuff
 				while (true)
-                                {
-                                // prepare an amount to send
-                                var amount = Math.Round(rnd.NextDouble() * 10.0, 2);
+				{
+					// produce between -1.0 and 1.0 water
+					double producedWater = Math.Round(rnd.NextDouble() * 2.0 - 1.0, 1);
+					pendingWater += producedWater;
 
-                                mLog.Info($"Sending {amount} units of food to Farm...");
+					var result = Farm.SubmitWater(pendingWater);
 
-                                try
-                                {
-                                        // the generated client has a synchronous wrapper SubmitWater(...)
-                                        var result = Farm.SubmitWater(amount);
+					if (result.IsAccepted)
+					{
+						mLog.Info($"Submitted {pendingWater} water.");
+						pendingWater = 0;
+					}
+					else if (result.FailReason == "FarmSelling")
+					{
+						mLog.Info("Farm is selling; will retry with accumulated water.");
+					}
+					else
+					{
+						mLog.Warn($"Submission failed: {result.FailReason}. Keeping {pendingWater} to retry.");
+					}
 
-                                        // log the server response
-                                        mLog.Info($"SubmitWater -> IsAccepted={result.IsAccepted}, FailReason='{result.FailReason ?? string.Empty}'");
-                                }
-                                catch (Exception ex)
-                                {
-                                        // ApiException or other exceptions will be caught here
-                                        mLog.Warn(ex, "Failed to submit water");
-                                }
-
-                                // wait between attempts
-                                Thread.Sleep(2000);
-                                }			
+					// wait between sending attempts
+					Thread.Sleep(2000);
+				}
 			}
-			catch( Exception e )
+			catch (Exception e)
 			{
 				//log whatever exception to console
 				mLog.Warn(e, "Unhandled exception caught. Will restart main loop.");

@@ -19,6 +19,8 @@ class Client
 	/// </summary>
 	Logger mLog = LogManager.GetCurrentClassLogger();
 
+	private double pendingFood = 0.0;
+
 	/// <summary>
 	/// Configures logging subsystem.
 	/// </summary>
@@ -40,7 +42,8 @@ class Client
 	/// <summary>
 	/// Program body.
 	/// </summary>
-	private void Run() {
+	private void Run()
+	{
 		//configure logging
 		ConfigureLogging();
 
@@ -48,42 +51,41 @@ class Client
 		var rnd = new Random();
 
 		//run everythin in a loop to recover from connection errors
-		while( true )
+		while (true)
 		{
-			try {
+			try
+			{
 				//connect to the server, get service client proxy
 				var Farm = new FarmClient("http://127.0.0.1:5100", new HttpClient());
 
-				//log identity data
-				mLog.Info($"I am a food client.");
-
 				//do the food stuff
 				while (true)
-                                {
-                                // prepare an amount to send
-                                var amount = Math.Round(rnd.NextDouble() * 10.0, 2);
+				{
+					// produce between -1.0 and 1.0 food
+					double producedFood = Math.Round(rnd.NextDouble() * 2.0 - 1.0, 1); 
+					pendingFood += producedFood;
 
-                                mLog.Info($"Sending {amount} units of food to Farm...");
+					var result = Farm.SubmitFood(pendingFood);
 
-                                try
-                                {
-                                        // the generated client has a synchronous wrapper SubmitFood(...)
-                                        var result = Farm.SubmitFood(amount);
+					if (result.IsAccepted)
+					{
+						mLog.Info($"Submitted {pendingFood} food.");
+						pendingFood = 0;
+					}
+					else if (result.FailReason == "FarmSelling")
+					{
+						mLog.Info("Farm is selling; will retry with accumulated food.");
+					}
+					else
+					{
+						mLog.Warn($"Submission failed: {result.FailReason}. Keeping {pendingFood} to retry.");
+					}
 
-                                        // log the server response
-                                        mLog.Info($"SubmitFood -> IsAccepted={result.IsAccepted}, FailReason='{result.FailReason ?? string.Empty}'");
-                                }
-                                catch (Exception ex)
-                                {
-                                        // ApiException or other exceptions will be caught here
-                                        mLog.Warn(ex, "Failed to submit food");
-                                }
-
-                                // wait between attempts
-                                Thread.Sleep(2000);
-                                }			
+					// wait between sending attempts
+					Thread.Sleep(2000);
+				}
 			}
-			catch( Exception e )
+			catch (Exception e)
 			{
 				//log whatever exception to console
 				mLog.Warn(e, "Unhandled exception caught. Will restart main loop.");
