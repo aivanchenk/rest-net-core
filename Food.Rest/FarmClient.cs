@@ -72,6 +72,10 @@ namespace Services
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
+        /// <summary>
+        /// Submits a specified amount of food to the farm for processing.
+        /// </summary>
+        /// <param name="amount">The amount of food to be added to the farm.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<SubmissionResult> SubmitFoodAsync(double? amount)
@@ -79,6 +83,10 @@ namespace Services
             return SubmitFoodAsync(amount, System.Threading.CancellationToken.None);
         }
 
+        /// <summary>
+        /// Submits a specified amount of food to the farm for processing.
+        /// </summary>
+        /// <param name="amount">The amount of food to be added to the farm.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual SubmissionResult SubmitFood(double? amount)
@@ -87,6 +95,10 @@ namespace Services
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Submits a specified amount of food to the farm for processing.
+        /// </summary>
+        /// <param name="amount">The amount of food to be added to the farm.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<SubmissionResult> SubmitFoodAsync(double? amount, System.Threading.CancellationToken cancellationToken)
@@ -164,6 +176,10 @@ namespace Services
             }
         }
 
+        /// <summary>
+        /// Submits a specified amount of water to the farm for processing.
+        /// </summary>
+        /// <param name="amount">The amount of water to be added to the farm.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<SubmissionResult> SubmitWaterAsync(double? amount)
@@ -171,6 +187,10 @@ namespace Services
             return SubmitWaterAsync(amount, System.Threading.CancellationToken.None);
         }
 
+        /// <summary>
+        /// Submits a specified amount of water to the farm for processing.
+        /// </summary>
+        /// <param name="amount">The amount of water to be added to the farm.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual SubmissionResult SubmitWater(double? amount)
@@ -179,6 +199,10 @@ namespace Services
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Submits a specified amount of water to the farm for processing.
+        /// </summary>
+        /// <param name="amount">The amount of water to be added to the farm.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<SubmissionResult> SubmitWaterAsync(double? amount, System.Threading.CancellationToken cancellationToken)
@@ -388,6 +412,9 @@ namespace Services
         }
     }
 
+    /// <summary>
+    /// Describes the outcome of a resource submission attempt.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class SubmissionResult
     {
